@@ -3,11 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Study Buddy</title>
+    <title>Sliding Panel Example</title>
     <link rel="stylesheet" href="popup.css">
 </head>
 <body>
+    <div class="main-buttons">
+        <h1>The Study Buddy</h1>
+        <button class="open-panel-btn" id="pomodoro-btn">Pomodoro Timer</button>
+        <button class="open-panel-btn" id="terms-btn">Terms to Study</button>
+        <button class="open-panel-btn" id="to-study-btn">What to Study</button>
+
+    </div>
+
+    <div class="sliding-panel" id="pomodoro-window">
+        <button class="close-panel-btn">&larr; Back</button>
+        <h2>This is the Sliding Panel</h2>
+        <p>pomodoro</p>
+    </div>
+
+    <div class="sliding-panel" id="terms-window">
+        <button class="close-panel-btn">&larr; Back</button>
+        <h2>This is the Sliding Panel</h2>
+        <p>Terms.</p>
+    </div>
+
+    <div class="sliding-panel" id="to-study-window">
+        <button class="close-panel-btn">&larr; Back</button>
+        <h2>This is the Sliding Panel</h2>
+        <p>to Study.</p>
+    </div>
+
     
 </body>
+<footer>
+    <p>Created by Evan Zhang</p>
+</footer>
 <script src="popup.js"></script>
 </html>
