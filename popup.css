@@ -60,6 +60,38 @@ html {
 } 
 
 
+/* POMODORO TIMER */
+
+.timer {
+    font-size: 48px;
+    text-align: center;
+    margin: 20px 0;
+}
+
+#start-timer-btn, #reset-timer-btn {
+    background-color: #007BFF;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+    margin: 10px;
+    display: block;
+    width: 100%; /* Full width of the container */
+}
+
+#reset-timer-btn {
+    background-color: #FF5733;
+}
+
+#time-input {
+    padding: 5px;
+    font-size: 16px;
+    width: 60px;
+    margin-top: 10px;
+}
+
 /* FOOTER */
 footer {
     height: 26vh;
