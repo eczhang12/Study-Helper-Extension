@@ -12,91 +12,91 @@ document.querySelectorAll('.close-panel-btn').forEach(button => {
     });
 });
 
-// Timer functionality
-let timerInterval;
-let totalTime;
-let isWorkPhase = true;
-let cycleCount = 0;
 
-const minutesSpan = document.getElementById('minutes');
-const secondsSpan = document.getElementById('seconds');
-const phaseLabel = document.getElementById('phase-label');
-const workTimeInput = document.getElementById('work-time-input');
-const breakTimeInput = document.getElementById('break-time-input');
-const cycleCountSpan = document.getElementById('cycle-count');
+// TIMER FUNCTIONALITY
 
-function startTimer() {
-    if (timerInterval) return; // Prevent multiple intervals
+document.getElementById('start-button').addEventListener('click', () => {
+    chrome.runtime.sendMessage({ action: 'start' });
+});
 
-    setPhaseDuration(); // Set initial phase duration
+document.getElementById('reset-button').addEventListener('click', () => {
+    chrome.runtime.sendMessage({ action: 'reset' });
+});
 
-    timerInterval = setInterval(() => {
-        totalTime--;
-        updateTimerDisplay();
+// Update UI with stored values
+chrome.storage.local.get(['totalTime', 'isWorkPhase', 'cycleCount'], data => {
+    if (data.totalTime !== undefined) {
+        updateUI(data.totalTime, data.isWorkPhase, data.cycleCount);
+    }
+});
 
-        if (totalTime <= 0) {
-            handlePhaseTransition();
-        }
-    }, 1000);
-}
-
-function setPhaseDuration() {
-    totalTime = parseInt(isWorkPhase ? workTimeInput.value : breakTimeInput.value) * 60;
-    phaseLabel.textContent = isWorkPhase ? 'Work' : 'Break';
-    updateTimerDisplay();
-}
-
-function updateTimerDisplay() {
+function updateUI(totalTime, isWorkPhase, cycleCount) {
     const minutes = Math.floor(totalTime / 60);
     const seconds = totalTime % 60;
-    minutesSpan.textContent = String(minutes).padStart(2, '0');
-    secondsSpan.textContent = String(seconds).padStart(2, '0');
+    document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+    document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+    document.getElementById('phase-label').textContent = isWorkPhase ? 'Work' : 'Break';
+    document.getElementById('cycle-count').textContent = cycleCount;
 }
 
-function handlePhaseTransition() {
-    if (isWorkPhase) {
-        // Switch to break phase
-        isWorkPhase = false;
-    } else {
-        // Increment cycle count after completing a break
-        cycleCount++;
-        cycleCountSpan.textContent = cycleCount;
-        // Reset to work phase for the next cycle
-        isWorkPhase = true;
-    }
-    setPhaseDuration();
-}
-
-function resetTimer() {
-    clearInterval(timerInterval);
-    timerInterval = null;
-    isWorkPhase = true; // Reset to work phase
-    cycleCount = 0; // Reset cycle count
-    cycleCountSpan.textContent = cycleCount;
-    setPhaseDuration(); // Reset timer to initial work duration
-}
 
 // To-Do List functionality
-document.getElementById('add-todo-btn').addEventListener('click', () => {
-    const input = document.getElementById('todo-input');
-    const taskText = input.value.trim();
+const addButton = document.getElementById('add-todo-btn');
+const todoInput = document.getElementById('todo-input');
+const todoList = document.getElementById('todo-list');
 
+// Load saved todos from storage
+function loadTodos() {
+    chrome.storage.local.get('todos', data => {
+        if (data.todos) {
+            todoList.innerHTML = '';
+            data.todos.forEach(todo => {
+                addTodoToDOM(todo);
+            });
+        }
+    });
+}
+
+// Save todos to storage
+function saveTodos() {
+    const todos = [];
+    todoList.querySelectorAll('li').forEach(item => {
+        todos.push(item.textContent.replace('Delete', '').trim());
+    });
+    chrome.storage.local.set({ todos });
+}
+
+// Add a new todo item to the DOM
+function addTodoToDOM(todoText) {
+    const li = document.createElement('li');
+    li.innerHTML = `
+        ${todoText}
+        <button class="delete-btn">Delete</button>
+    `;
+    todoList.appendChild(li);
+}
+
+// Handle adding new todo items
+addButton.addEventListener('click', () => {
+    const taskText = todoInput.value.trim();
     if (taskText) {
-        const li = document.createElement('li');
-        li.innerHTML = `
-            ${taskText}
-            <button class="delete-btn">Delete</button>
-        `;
-        document.getElementById('todo-list').appendChild(li);
-        input.value = ''; // Clear input field
+        addTodoToDOM(taskText);
+        todoInput.value = '';
+        saveTodos();
     }
 });
 
-document.getElementById('todo-list').addEventListener('click', (event) => {
+// Handle deleting todo items
+todoList.addEventListener('click', (event) => {
     if (event.target.classList.contains('delete-btn')) {
         event.target.parentElement.remove();
+        saveTodos();
     }
 });
+
+// Load todos when the popup is opened
+loadTodos();
+
 
 // Popup JavaScript
 document.addEventListener('DOMContentLoaded', () => {

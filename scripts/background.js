@@ -1,72 +1,71 @@
-let timerInterval;
+let timerId;
 let totalTime;
 let isWorkPhase = true;
 let cycleCount = 0;
 
-chrome.alarms.onAlarm.addListener(alarm => {
-    if (alarm.name === 'pomodoro') {
-        chrome.storage.local.get(['isWorkPhase', 'cycleCount'], result => {
-            isWorkPhase = result.isWorkPhase ?? true;
-            cycleCount = result.cycleCount ?? 0;
+// Function to start the timer
+function startTimer() {
+    if (timerId) return; // Prevent multiple timers
 
-            // Notify user
-            chrome.notifications.create('pomodoro-notification', {
-                type: 'basic',
-                iconUrl: 'icon128.png',
-                title: 'Pomodoro Timer',
-                message: isWorkPhase ? 'Time’s up! Take a break!' : 'Break time is over! Back to work!',
-                buttons: [{ title: 'Dismiss' }]
-            });
+    setPhaseDuration(); // Set initial phase duration
 
-            // Increment cycle count if work phase is over
-            if (isWorkPhase) {
-                cycleCount++;
-                chrome.storage.local.set({ cycleCount });
-            }
+    timerId = setInterval(() => {
+        totalTime--;
+        updateStorage();
 
-            // Toggle phase
-            isWorkPhase = !isWorkPhase;
-            chrome.storage.local.set({ isWorkPhase });
+        if (totalTime <= 0) {
+            handlePhaseTransition();
+        }
+    }, 1000);
+}
 
-            // Set next phase duration
-            setPhaseDuration();
-            chrome.alarms.create('pomodoro', { when: Date.now() + totalTime * 1000 });
-        });
-    }
-});
-
-chrome.notifications.onButtonClicked.addListener((notificationId, buttonIndex) => {
-    if (notificationId === 'pomodoro-notification') {
-        chrome.notifications.clear('pomodoro-notification');
-    }
-});
-
+// Function to set the duration of the current phase
 function setPhaseDuration() {
-    chrome.storage.local.get(['workTime', 'breakTime', 'isWorkPhase'], result => {
-        const workTime = result.workTime ?? 25;
-        const breakTime = result.breakTime ?? 5;
-        totalTime = (isWorkPhase ? workTime : breakTime) * 60;
+    chrome.storage.local.get(['workTime', 'breakTime'], data => {
+        totalTime = parseInt(isWorkPhase ? data.workTime : data.breakTime) * 60;
+        updateStorage();
     });
 }
 
-function startTimer(duration) {
-    totalTime = duration;
+// Function to handle the transition between work and break phases
+function handlePhaseTransition() {
+    if (isWorkPhase) {
+        isWorkPhase = false;
+    } else {
+        cycleCount++;
+        isWorkPhase = true;
+    }
     setPhaseDuration();
-    chrome.alarms.create('pomodoro', { when: Date.now() + totalTime * 1000 });
 }
 
+// Function to reset the timer
 function resetTimer() {
-    chrome.alarms.clear('pomodoro');
-    totalTime = 0;
+    clearInterval(timerId);
+    timerId = null;
     isWorkPhase = true;
     cycleCount = 0;
-    chrome.storage.local.set({ cycleCount, isWorkPhase });
+    updateStorage();
 }
 
+// Function to update the stored timer and cycle count
+function updateStorage() {
+    chrome.storage.local.set({ totalTime, isWorkPhase, cycleCount });
+}
+
+// Initialize storage with default values if not already set
+chrome.runtime.onInstalled.addListener(() => {
+    chrome.storage.local.get(['workTime', 'breakTime'], data => {
+        if (data.workTime === undefined || data.breakTime === undefined) {
+            chrome.storage.local.set({ workTime: 25, breakTime: 5 });
+        }
+    });
+});
+
+// Listen for messages from the popup to start or reset the timer
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    if (message.action === 'startTimer') {
-        startTimer(message.duration);
-    } else if (message.action === 'resetTimer') {
+    if (message.action === 'start') {
+        startTimer();
+    } else if (message.action === 'reset') {
         resetTimer();
     }
 });

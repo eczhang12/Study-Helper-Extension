@@ -11,7 +11,7 @@
         "alarms"
     ],
     "background": {
-        "persistent" :true,
+        "persistent": true,
         "service_worker": "scripts/background.js"
     },
     "content_scripts": [
