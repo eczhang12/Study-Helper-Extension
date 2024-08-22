@@ -5,7 +5,8 @@
     "description": "A Chrome extension to help students study with Pomodoro timers, a to-do list, and word definitions.",
     "permissions": [
         "storage",
-        "activeTab"
+        "activeTab",
+        "notifications"
     ],
     "background": {
         "service_worker": "scripts/background.js"

@@ -8,6 +8,11 @@
 
 
 body {
+    width: 300px; /* Adjust width as needed */
+    min-height: 400px; /* Adjust height as needed */
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
     font-family: 'Poppins', sans-serif;
     overflow-x: hidden; /* Prevent horizontal scrolling */
 }
@@ -116,6 +121,7 @@ li {
     margin-bottom: 5px;
     background: #fff;
     border: 1px solid #ddd;
+    color: black;
 }
 
 button.delete-btn {

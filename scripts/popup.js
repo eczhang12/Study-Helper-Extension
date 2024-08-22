@@ -105,3 +105,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
 document.getElementById('start-timer-btn').addEventListener('click', startTimer);
 document.getElementById('reset-timer-btn').addEventListener('click', resetTimer);
+
+
+document.getElementById('start-timer-btn').addEventListener('click', function() {
+    const duration = parseInt(document.getElementById('timer-input').value) * 60 * 1000; // Convert to milliseconds
+    chrome.runtime.sendMessage({ action: 'startTimer', duration: duration });
+});
