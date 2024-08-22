@@ -17,6 +17,7 @@ document.querySelectorAll('.close-panel-btn').forEach(button => {
 
 document.getElementById('start-button').addEventListener('click', () => {
     chrome.runtime.sendMessage({ action: 'start' });
+    console.log('Starting timer...');
 });
 
 document.getElementById('reset-button').addEventListener('click', () => {
@@ -96,22 +97,3 @@ todoList.addEventListener('click', (event) => {
 
 // Load todos when the popup is opened
 loadTodos();
-
-
-// Popup JavaScript
-document.addEventListener('DOMContentLoaded', () => {
-    const wordsListElement = document.getElementById('words-list');
-
-    chrome.storage.local.get('wordsList', (result) => {
-        const wordsList = result.wordsList || [];
-        wordsListElement.innerHTML = wordsList.map(word => `<li>${word}</li>`).join('');
-    });
-});
-
-document.getElementById('start-timer-btn').addEventListener('click', startTimer);
-document.getElementById('reset-timer-btn').addEventListener('click', resetTimer);
-
-document.getElementById('start-timer-btn').addEventListener('click', () => {
-    const duration = parseInt(document.getElementById('timer-input').value) * 60 * 1000; // Convert to milliseconds
-    chrome.runtime.sendMessage({ action: 'startTimer', duration: duration });
-});
