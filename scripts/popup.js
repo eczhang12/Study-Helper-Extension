@@ -1,21 +1,23 @@
 // Sliding panel functionality
 document.querySelectorAll('.open-panel-btn').forEach(button => {
-    button.addEventListener('click', function() {
-        document.querySelector(`#${this.id.replace('-btn', '-window')}`).classList.add('active');
+    button.addEventListener('click', () => {
+        const panelId = `#${button.id.replace('-btn', '-window')}`;
+        document.querySelector(panelId).classList.add('active');
     });
 });
 
 document.querySelectorAll('.close-panel-btn').forEach(button => {
-    button.addEventListener('click', function() {
-        this.closest('.sliding-panel').classList.remove('active');
+    button.addEventListener('click', () => {
+        button.closest('.sliding-panel').classList.remove('active');
     });
 });
 
-// Timer functionality (as before)
+// Timer functionality
 let timerInterval;
 let totalTime;
 let isWorkPhase = true;
 let cycleCount = 0;
+
 const minutesSpan = document.getElementById('minutes');
 const secondsSpan = document.getElementById('seconds');
 const phaseLabel = document.getElementById('phase-label');
@@ -30,24 +32,10 @@ function startTimer() {
 
     timerInterval = setInterval(() => {
         totalTime--;
-        const minutes = Math.floor(totalTime / 60);
-        const seconds = totalTime % 60;
-        minutesSpan.textContent = String(minutes).padStart(2, '0');
-        secondsSpan.textContent = String(seconds).padStart(2, '0');
+        updateTimerDisplay();
 
         if (totalTime <= 0) {
-            if (isWorkPhase) {
-                // Switch to break phase
-                isWorkPhase = false;
-                setPhaseDuration();
-            } else {
-                // Increment cycle count after completing a break
-                cycleCount++;
-                cycleCountSpan.textContent = cycleCount;
-                // Reset to work phase for the next cycle
-                isWorkPhase = true;
-                setPhaseDuration();
-            }
+            handlePhaseTransition();
         }
     }, 1000);
 }
@@ -55,10 +43,28 @@ function startTimer() {
 function setPhaseDuration() {
     totalTime = parseInt(isWorkPhase ? workTimeInput.value : breakTimeInput.value) * 60;
     phaseLabel.textContent = isWorkPhase ? 'Work' : 'Break';
+    updateTimerDisplay();
+}
+
+function updateTimerDisplay() {
     const minutes = Math.floor(totalTime / 60);
     const seconds = totalTime % 60;
     minutesSpan.textContent = String(minutes).padStart(2, '0');
     secondsSpan.textContent = String(seconds).padStart(2, '0');
+}
+
+function handlePhaseTransition() {
+    if (isWorkPhase) {
+        // Switch to break phase
+        isWorkPhase = false;
+    } else {
+        // Increment cycle count after completing a break
+        cycleCount++;
+        cycleCountSpan.textContent = cycleCount;
+        // Reset to work phase for the next cycle
+        isWorkPhase = true;
+    }
+    setPhaseDuration();
 }
 
 function resetTimer() {
@@ -92,9 +98,8 @@ document.getElementById('todo-list').addEventListener('click', (event) => {
     }
 });
 
-// popup.js
-
-document.addEventListener('DOMContentLoaded', function() {
+// Popup JavaScript
+document.addEventListener('DOMContentLoaded', () => {
     const wordsListElement = document.getElementById('words-list');
 
     chrome.storage.local.get('wordsList', (result) => {
@@ -106,8 +111,7 @@ document.addEventListener('DOMContentLoaded', function() {
 document.getElementById('start-timer-btn').addEventListener('click', startTimer);
 document.getElementById('reset-timer-btn').addEventListener('click', resetTimer);
 
-
-document.getElementById('start-timer-btn').addEventListener('click', function() {
+document.getElementById('start-timer-btn').addEventListener('click', () => {
     const duration = parseInt(document.getElementById('timer-input').value) * 60 * 1000; // Convert to milliseconds
     chrome.runtime.sendMessage({ action: 'startTimer', duration: duration });
 });
