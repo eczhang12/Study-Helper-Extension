@@ -92,6 +92,40 @@ html {
     margin-top: 10px;
 }
 
+/* TODO WINDOW */
+#todo-input {
+    width: calc(100% - 100px);
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+#add-todo-btn {
+    width: 90px;
+    padding: 10px;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+li {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    margin-bottom: 5px;
+    background: #fff;
+    border: 1px solid #ddd;
+}
+
+button.delete-btn {
+    background: red;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
 /* FOOTER */
 footer {
     height: 26vh;

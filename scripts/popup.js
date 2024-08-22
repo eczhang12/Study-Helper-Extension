@@ -1,25 +1,17 @@
-// Function to open a sliding panel
-function openPanel(panelId) {
-    document.querySelector(panelId).classList.add('active');
-}
-
-// Function to close a sliding panel
-function closePanel() {
-    this.closest('.sliding-panel').classList.remove('active');
-}
-
-// Attach event listeners to open buttons
-document.querySelector('#pomodoro-btn').addEventListener('click', () => openPanel('#pomodoro-window'));
-document.querySelector('#terms-btn').addEventListener('click', () => openPanel('#terms-window'));
-document.querySelector('#to-study-btn').addEventListener('click', () => openPanel('#to-study-window'));
-
-// Attach event listeners to close buttons
-document.querySelectorAll('.close-panel-btn').forEach(button => {
-    button.addEventListener('click', closePanel);
+// Sliding panel functionality
+document.querySelectorAll('.open-panel-btn').forEach(button => {
+    button.addEventListener('click', function() {
+        document.querySelector(`#${this.id.replace('-btn', '-window')}`).classList.add('active');
+    });
 });
 
+document.querySelectorAll('.close-panel-btn').forEach(button => {
+    button.addEventListener('click', function() {
+        this.closest('.sliding-panel').classList.remove('active');
+    });
+});
 
-// Timer functionality
+// Timer functionality (as before)
 let timerInterval;
 let totalTime;
 let isWorkPhase = true;
@@ -77,6 +69,39 @@ function resetTimer() {
     cycleCountSpan.textContent = cycleCount;
     setPhaseDuration(); // Reset timer to initial work duration
 }
+
+// To-Do List functionality
+document.getElementById('add-todo-btn').addEventListener('click', () => {
+    const input = document.getElementById('todo-input');
+    const taskText = input.value.trim();
+
+    if (taskText) {
+        const li = document.createElement('li');
+        li.innerHTML = `
+            ${taskText}
+            <button class="delete-btn">Delete</button>
+        `;
+        document.getElementById('todo-list').appendChild(li);
+        input.value = ''; // Clear input field
+    }
+});
+
+document.getElementById('todo-list').addEventListener('click', (event) => {
+    if (event.target.classList.contains('delete-btn')) {
+        event.target.parentElement.remove();
+    }
+});
+
+// popup.js
+
+document.addEventListener('DOMContentLoaded', function() {
+    const wordsListElement = document.getElementById('words-list');
+
+    chrome.storage.local.get('wordsList', (result) => {
+        const wordsList = result.wordsList || [];
+        wordsListElement.innerHTML = wordsList.map(word => `<li>${word}</li>`).join('');
+    });
+});
 
 document.getElementById('start-timer-btn').addEventListener('click', startTimer);
 document.getElementById('reset-timer-btn').addEventListener('click', resetTimer);
