@@ -96,6 +96,97 @@ chrome.storage.local.get(["timeOption"], (res) => {
 
 
 
+// ANKI WORD LIST
+
+document.addEventListener("DOMContentLoaded", () => {
+    const wordListElement = document.getElementById("wordList");
+    const createAnkiButton = document.getElementById("createAnkiCards");
+  
+    // Load the stored word list
+    chrome.storage.local.get(["wordList"], (result) => {
+      const wordList = result.wordList || [];
+      wordList.forEach((word) => {
+        addWordToUI(word);
+      });
+    });
+  
+    // Create Anki flashcards
+    createAnkiButton.addEventListener("click", () => {
+      chrome.storage.local.get(["wordList"], (result) => {
+        const wordList = result.wordList || [];
+  
+        // Prepare notes for AnkiConnect
+        const notes = wordList.map((word) => ({
+          deckName: "Default",
+          modelName: "Basic",
+          fields: {
+            Front: word,
+            Back: `Definition of ${word}`
+          },
+          options: {
+            allowDuplicate: false
+          },
+          tags: ["generated"]
+        }));
+  
+        // Send the notes to AnkiConnect
+        fetch("http://localhost:8765", {
+          method: "POST",
+          body: JSON.stringify({
+            action: "addNotes",
+            version: 6,
+            params: { notes: notes }
+          }),
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.error) {
+            console.error("Error adding notes:", data.error);
+          } else {
+            alert("Flashcards created successfully in Anki!");
+          }
+        })
+        .catch(error => console.error("Failed to connect to Anki:", error));
+      });
+    });
+  
+    // Function to add word to the UI
+    function addWordToUI(word) {
+      const li = document.createElement("li");
+      li.textContent = word;
+  
+      const deleteButton = document.createElement("button");
+      deleteButton.textContent = "X";
+      deleteButton.className = "delete-button";
+      deleteButton.addEventListener("click", () => {
+        deleteWord(word, li);
+      });
+  
+      li.appendChild(deleteButton);
+      wordListElement.appendChild(li);
+    }
+  
+    // Function to delete a word
+    function deleteWord(word, listItem) {
+      chrome.storage.local.get(["wordList"], (result) => {
+        let wordList = result.wordList || [];
+        wordList = wordList.filter((w) => w !== word);
+        chrome.storage.local.set({ wordList: wordList }, () => {
+          wordListElement.removeChild(listItem);
+        });
+      });
+    }
+  });
+  
+
+
+
+
+
+
+
+
+
 
 
 // TO DO LIST

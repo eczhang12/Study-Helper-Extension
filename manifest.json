@@ -8,7 +8,9 @@
         "activeTab",
         "notifications", 
         "background",
-        "alarms"
+        "alarms",
+        "contextMenus",
+        "scripting"
     ],
     "background": {
         "service_worker": "scripts/background.js"

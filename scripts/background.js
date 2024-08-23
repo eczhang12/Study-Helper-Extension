@@ -1,3 +1,5 @@
+// POMODORO FUNCTION
+
 chrome.alarms.create("pomodoroTimer",  {
     periodInMinutes: 1/60,
 })
@@ -55,3 +57,32 @@ chrome.storage.local.get(["timer", "isRunning", "isBreakRunning", "timeOption", 
         isBreakRunning: "isBreakRunning" in res ? res.isBreakRunning : false,
     });
 });
+
+
+// FLASHCARD WORD STUDY FUNCTION
+
+chrome.runtime.onInstalled.addListener(() => {
+    chrome.contextMenus.create({
+      id: "findDefinition",
+      title: "Find Definition",
+      contexts: ["selection"]
+    });
+  });
+  
+  chrome.contextMenus.onClicked.addListener((info, tab) => {
+    if (info.menuItemId === "findDefinition") {
+      const selectedText = info.selectionText;
+      chrome.storage.local.get(["wordList"], (result) => {
+        const wordList = result.wordList || [];
+        if (!wordList.includes(selectedText)) {
+          wordList.push(selectedText);
+          chrome.storage.local.set({ wordList: wordList });
+        }
+      });
+  
+      // Open a new tab with the definition
+      const searchUrl = `https://www.google.com/search?q=define+${encodeURIComponent(selectedText)}`;
+      chrome.tabs.create({ url: searchUrl });
+    }
+  });
+  
