@@ -37,22 +37,23 @@ startTimerBtn.addEventListener("click", () => {
 })
 
 const time = document.getElementById("time")
-
+const whichPhase = document.getElementById("phase")
 function updateTime() {
-    chrome.storage.local.get(["timer", "timeOption", "isBreakRunning", "isRunning"], (res) => {
+    chrome.storage.local.get(["timer", "timeOption", "breakTimeOption", "isBreakRunning", "isRunning"], (res) => {
         const time = document.getElementById("time")
-        const minutes = `${res.timeOption - Math.ceil(res.timer / 60)}`.padStart(2, "0")
+        const minutes = res.isRunning ? `${res.timeOption - Math.ceil(res.timer / 60)}`.padStart(2, "0") : `${res.breakTimeOption - Math.ceil(res.timer / 60)}`.padStart(2, "0")
         let seconds = "00"
         if (res.timer % 60 != 0) {
             seconds = `${60 - res.timer % 60}`.padStart(2, "0")
         }
         time.textContent = `${minutes}:${seconds}`
-        const whichPhase = document.getElementById("phase")
-        if (isBreakRunning) {
-            whichPhase.textContent = "Break"
-        }
-        else if (isRunning) {
-            whichPhase.textContent = "Work"
+        
+        if (res.isBreakRunning) {
+            whichPhase.textContent = "Break";
+        } else if (res.isRunning) {
+            whichPhase.textContent = "Work";
+        } else {
+            whichPhase.textContent = "Paused";  // Optional: handle a paused state if needed
         }
     })
 }
@@ -82,6 +83,7 @@ saveBtn.addEventListener("click", () => {
         timer: 0,
         breakTimer: 0,
         timeOption: timeOption.value,
+        breakTimeOption: breakTimeOption.value,
         isRunning: false,
         isBreakRunning: false
     })
@@ -96,7 +98,7 @@ chrome.storage.local.get(["timeOption"], (res) => {
 
 
 
-
+// TO DO LIST
 
 let tasks = []
 
