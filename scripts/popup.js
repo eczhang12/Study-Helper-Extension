@@ -18,6 +18,7 @@ resetTimerBtn.addEventListener("click", () => {
     chrome.storage.local.set({
         timer: 0,
         isRunning: false,
+        isBreakRunning: false
     }, () => {
         startTimerBtn.textContent = "Start Timer"
     })
@@ -38,7 +39,7 @@ startTimerBtn.addEventListener("click", () => {
 const time = document.getElementById("time")
 
 function updateTime() {
-    chrome.storage.local.get(["timer", "timeOption"], (res) => {
+    chrome.storage.local.get(["timer", "timeOption", "isBreakRunning", "isRunning"], (res) => {
         const time = document.getElementById("time")
         const minutes = `${res.timeOption - Math.ceil(res.timer / 60)}`.padStart(2, "0")
         let seconds = "00"
@@ -46,6 +47,13 @@ function updateTime() {
             seconds = `${60 - res.timer % 60}`.padStart(2, "0")
         }
         time.textContent = `${minutes}:${seconds}`
+        const whichPhase = document.getElementById("phase")
+        if (isBreakRunning) {
+            whichPhase.textContent = "Break"
+        }
+        else if (isRunning) {
+            whichPhase.textContent = "Work"
+        }
     })
 }
 
@@ -60,17 +68,28 @@ timeOption.addEventListener("change", (event) => {
     }
 })
 
+const breakTimeOption = document.getElementById("break-time-option")
+timeOption.addEventListener("change", (event) => {
+    const val = event.target.value
+    if (val < 1 || val > 60) {
+        breakTimeOption.value = 5
+    }
+})
+
 const saveBtn = document.getElementById("save-btn")
 saveBtn.addEventListener("click", () => {
     chrome.storage.local.set({
         timer: 0,
+        breakTimer: 0,
         timeOption: timeOption.value,
-        isRunning: false
+        isRunning: false,
+        isBreakRunning: false
     })
 })
 
 chrome.storage.local.get(["timeOption"], (res) => {
     timeOption.value = res.timeOption
+    breakTimeOption.value = res.breakTimeOption
 })
 
 
