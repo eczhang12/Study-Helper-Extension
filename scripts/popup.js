@@ -13,87 +13,135 @@ document.querySelectorAll('.close-panel-btn').forEach(button => {
 });
 
 
-// TIMER FUNCTIONALITY
+const resetTimerBtn = document.getElementById("reset-timer-btn")
+resetTimerBtn.addEventListener("click", () => {
+    chrome.storage.local.set({
+        timer: 0,
+        isRunning: false,
+    }, () => {
+        startTimerBtn.textContent = "Start Timer"
+    })
+})
 
-document.getElementById('start-button').addEventListener('click', () => {
-    chrome.runtime.sendMessage({ action: 'start' });
-    console.log('Starting timer...');
-});
+const startTimerBtn = document.getElementById("start-timer-btn")
+startTimerBtn.addEventListener("click", () => {
+    chrome.storage.local.get(["isRunning"], (res) => {
+        chrome.storage.local.set({
+            isRunning: !res.isRunning,
+        }, () => {
+            startTimerBtn.textContent = !res.isRunning ? "Pause Timer" : "Start Timer"
+        })
+    })
+    
+})
 
-document.getElementById('reset-button').addEventListener('click', () => {
-    chrome.runtime.sendMessage({ action: 'reset' });
-});
+const time = document.getElementById("time")
 
-// Update UI with stored values
-chrome.storage.local.get(['totalTime', 'isWorkPhase', 'cycleCount'], data => {
-    if (data.totalTime !== undefined) {
-        updateUI(data.totalTime, data.isWorkPhase, data.cycleCount);
-    }
-});
-
-function updateUI(totalTime, isWorkPhase, cycleCount) {
-    const minutes = Math.floor(totalTime / 60);
-    const seconds = totalTime % 60;
-    document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
-    document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
-    document.getElementById('phase-label').textContent = isWorkPhase ? 'Work' : 'Break';
-    document.getElementById('cycle-count').textContent = cycleCount;
-}
-
-
-// To-Do List functionality
-const addButton = document.getElementById('add-todo-btn');
-const todoInput = document.getElementById('todo-input');
-const todoList = document.getElementById('todo-list');
-
-// Load saved todos from storage
-function loadTodos() {
-    chrome.storage.local.get('todos', data => {
-        if (data.todos) {
-            todoList.innerHTML = '';
-            data.todos.forEach(todo => {
-                addTodoToDOM(todo);
-            });
+function updateTime() {
+    chrome.storage.local.get(["timer", "timeOption"], (res) => {
+        const time = document.getElementById("time")
+        const minutes = `${res.timeOption - Math.ceil(res.timer / 60)}`.padStart(2, "0")
+        let seconds = "00"
+        if (res.timer % 60 != 0) {
+            seconds = `${60 - res.timer % 60}`.padStart(2, "0")
         }
-    });
+        time.textContent = `${minutes}:${seconds}`
+    })
 }
 
-// Save todos to storage
-function saveTodos() {
-    const todos = [];
-    todoList.querySelectorAll('li').forEach(item => {
-        todos.push(item.textContent.replace('Delete', '').trim());
-    });
-    chrome.storage.local.set({ todos });
-}
+updateTime()
+setInterval(updateTime, 1000)
 
-// Add a new todo item to the DOM
-function addTodoToDOM(todoText) {
-    const li = document.createElement('li');
-    li.innerHTML = `
-        ${todoText}
-        <button class="delete-btn">Delete</button>
-    `;
-    todoList.appendChild(li);
-}
-
-// Handle adding new todo items
-addButton.addEventListener('click', () => {
-    const taskText = todoInput.value.trim();
-    if (taskText) {
-        addTodoToDOM(taskText);
-        todoInput.value = '';
-        saveTodos();
+const timeOption = document.getElementById("work-time-option")
+timeOption.addEventListener("change", (event) => {
+    const val = event.target.value
+    if (val < 1 || val > 60) {
+        timeOption.value = 25
     }
-});
+})
 
-// Handle deleting todo items
-todoList.addEventListener('click', (event) => {
-    if (event.target.classList.contains('delete-btn')) {
-        event.target.parentElement.remove();
-        saveTodos();
-    }
-});
+const saveBtn = document.getElementById("save-btn")
+saveBtn.addEventListener("click", () => {
+    chrome.storage.local.set({
+        timer: 0,
+        timeOption: timeOption.value,
+        isRunning: false
+    })
+})
 
-// Load todos when the popup is opened
-loadTodos();
+chrome.storage.local.get(["timeOption"], (res) => {
+    timeOption.value = res.timeOption
+})
+
+
+
+
+
+
+
+let tasks = []
+
+const addTaskBtn = document.getElementById("add-task-btn")
+const saveTaskBtn = document.getElementById("save-task-btn")
+addTaskBtn.addEventListener("click", () => addTask())
+saveTaskBtn.addEventListener("click", () => saveTasks())
+
+chrome.storage.sync.get(["tasks"], (res) => {
+    tasks = res.tasks ? res.tasks : []
+    renderTasks()
+})
+
+function saveTasks() {
+    chrome.storage.sync.set({
+        tasks,
+    })
+}
+
+function renderTask(taskNum) {
+    
+    const taskRow = document.createElement("div")
+
+    const text = document.createElement("input")
+    text.type = "text"
+    text.placeholder = "Enter a task..."
+    text.value = tasks[taskNum]
+    text.addEventListener("change", () => {
+        tasks[taskNum] = text.value
+        console.log(tasks)
+    })
+
+    const deleteBtn = document.createElement("input")
+    deleteBtn.type = "button"
+    deleteBtn.value = "X"
+    deleteBtn.addEventListener("click", () => {
+        deleteTask(taskNum)
+    })
+
+    taskRow.appendChild(text);
+    taskRow.appendChild(deleteBtn)
+
+    const taskContainer = document.getElementById("task-container")
+    taskContainer.appendChild(taskRow)
+    saveTasks()
+}
+
+function addTask() {
+    const taskNum = tasks.length
+    tasks.push("")
+    renderTask(taskNum)
+    saveTasks()
+}
+
+function deleteTask(taskNum) {
+    tasks.splice(taskNum, 1)
+    renderTasks()
+    saveTasks()
+}
+
+function renderTasks() {
+    const taskContainer = document.getElementById("task-container")
+    taskContainer.textContent = ""
+    tasks.forEach((taskText, taskNum) => {
+        renderTask(taskNum)
+    })
+}

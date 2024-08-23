@@ -18,24 +18,19 @@
     <div class="sliding-panel" id="pomodoro-window">
         <button class="close-panel-btn">&larr; Back</button>
         <h2>Pomodoro Timer</h2>
-        <div>
-            <label for="work-time-input">Set Work Time (minutes):</label>
-            <input type="number" id="work-time-input" min="1" max="60" value="25">
-        </div>
-        <div>
-            <label for="break-time-input">Set Break Time (minutes):</label>
-            <input type="number" id="break-time-input" min="1" max="60" value="5">
-        </div>
-        <span id="phase-label">Work</span>
-            <br>
-        <div class="timer">
-            <span id="minutes">25</span>:<span id="seconds">00</span>
-        </div>
-        <div>
-            <h3>Completed Cycles: <span id="cycle-count">0</span></h3>
-        </div>
+        <h2 id="phase">Work</h2>
+        <h1 id="time">00:00</h1>
         <button id="start-timer-btn">Start Timer</button>
         <button id="reset-timer-btn">Reset Timer</button>
+        <label>How much work time: 
+            <input id="work-time-option" type="number" min = "1" max = "60" value = "25" />
+        </label>
+        <label>How much break time: 
+            <input type="number" id="break-time-option" value="5" min="1" max="60">
+        </label>
+        
+        <button id="save-btn">Save Options</button>
+
     </div>
 
     <div class="sliding-panel" id="terms-window">
@@ -47,9 +42,9 @@
     <div class="sliding-panel" id="to-study-window">
         <button class="close-panel-btn">&larr; Back</button>
         <h2>To-Do List</h2>
-        <input type="text" id="todo-input" placeholder="Add a new task">
-        <button id="add-todo-btn">Add Task</button>
-        <ul id="todo-list"></ul>
+        <button id="add-task-btn">Add Task</button>
+        <button id="save-task-btn">Save Tasks</button>
+        <div id="task-container"></div>
     </div>
 
     
