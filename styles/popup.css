@@ -22,7 +22,7 @@ html {
 }
 
 .main-buttons    {
-    padding: 20px;
+    padding: 10px;
     background-color: #f0f0f0;
     text-align: center;
     display: flex;
@@ -40,6 +40,7 @@ html {
     color: white;
     transition: right 0.4s ease; /* Smooth transition for sliding */
     z-index: 1000; /* Ensure it covers other content */
+    overflow-y: auto;
 }
 
 .sliding-panel.active {
@@ -67,10 +68,18 @@ html {
 
 /* POMODORO TIMER */
 
-.timer {
-    font-size: 48px;
+#pomodoro {
     text-align: center;
-    margin: 20px 0;
+}
+
+#phase {
+    text-align: center;
+}
+
+#time {
+    font-size: 32px;
+    text-align: center;
+    margin: 5px 0;
 }
 
 #start-timer-btn, #reset-timer-btn {
@@ -83,30 +92,54 @@ html {
     border-radius: 5px;
     margin: 10px;
     display: block;
-    width: 100%; /* Full width of the container */
+    width: 90%; /* Full width of the container */
 }
 
 #reset-timer-btn {
     background-color: #FF5733;
 }
 
-#time-input {
+#work-time-option,
+#break-time-option {
     padding: 5px;
     font-size: 16px;
     width: 60px;
     margin-top: 10px;
 }
 
-/* TODO WINDOW */
-#todo-input {
-    width: calc(100% - 100px);
-    padding: 10px;
-    margin-bottom: 10px;
+.label {
+    font-size: 16px
 }
 
-#add-todo-btn {
-    width: 90px;
-    padding: 10px;
+#save-btn {
+    background-color: white;
+    color: black;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+    margin: 10px;
+    display: block;
+    width: 50%; /* Full width of the container */
+}
+
+/* WORD LIST */
+#list {
+    text-align: center;
+}
+
+#createAnkiCards {
+    background-color: #007BFF;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+    margin: 10px;
+    display: block;
+    width: 90%; /* Full width of the container */
 }
 
 ul {
@@ -132,10 +165,85 @@ button.delete-btn {
     cursor: pointer;
 }
 
+
+/* TODO LIST */
+
+#todo {
+    text-align: center;
+}
+
+.button-group {
+    display: flex;
+    justify-content: center; /* Ensures buttons are spaced out */
+    gap: 10px; /* Adds some space between the buttons */
+}
+
+#add-task-btn {
+    background-color: #28a745; /* Green color */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#add-task-btn:hover {
+    background-color: #218838;
+}
+
+#save-task-btn {
+    background-color: #007bff; /* Blue color */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#save-task-btn:hover {
+    background-color: #0069d9;
+}
+
+#button-container {
+    align-items: center;
+}
+
+
+#task-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+.task-input {
+    outline: none;
+    border: none;
+    border-radius: 4px;
+    margin: 5px;
+    padding: 5px 10px 5px 10px;
+    width: 200px;
+}
+
+.task-delete, .delete-button {
+    outline: none;
+    border: none;
+    height: 25px;
+    width: 25px;
+    border-radius: 4px;
+    color:indianred;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.delete-button {
+    background-color: #FF5733;
+    color:white;
+}
+
 /* FOOTER */
 footer {
-    height: 26vh;
-    margin: 0 1rem;
+    height: 2vh;
   }
   
   footer p {

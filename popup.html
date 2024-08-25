@@ -18,25 +18,26 @@
     <!-- POMODORO FINISHED -->
     <div class="sliding-panel" id="pomodoro-window">
         <button class="close-panel-btn">&larr; Back</button>
-        <h2>Pomodoro Timer</h2>
-        <h2 id="phase">Work</h2>
+        <h1 id="pomodoro">Pomodoro Timer</h2>
         <h1 id="time">00:00</h1>
+        <h2 id="phase">Work</h2>
         <button id="start-timer-btn">Start Timer</button>
         <button id="reset-timer-btn">Reset Timer</button>
-        <label>How much work time: 
+        <label class="label">How much work time: 
             <input id="work-time-option" type="number" min = "1" max = "60" value = "25" />
         </label>
-        <label>How much break time: 
+        <br>
+        <label class="label">How much break time: 
             <input type="number" id="break-time-option" value="5" min="1" max="60">
         </label>
-        
+        <br>
         <button id="save-btn">Save Options</button>
 
     </div>
 
     <div class="sliding-panel" id="terms-window">
         <button class="close-panel-btn">&larr; Back</button>
-        <h3>Your Word List</h3>
+        <h2 id="list">Your Word List</h2>
         <button id="createAnkiCards">Create Anki Flashcards</button>
         <ul id="wordList"></ul>
     </div>
@@ -44,9 +45,11 @@
     <!-- TODO LIST FINISHED -->
     <div class="sliding-panel" id="to-study-window">
         <button class="close-panel-btn">&larr; Back</button>
-        <h2>To-Do List</h2>
-        <button id="add-task-btn">Add Task</button>
-        <button id="save-task-btn">Save Tasks</button>
+        <h2 id="todo">To-Do List</h2>
+        <div id="button-container">
+            <button id="add-task-btn">Add Task</button>
+            <button id="save-task-btn">Save Tasks</button>    
+        </div>
         <div id="task-container"></div>
     </div>
 
