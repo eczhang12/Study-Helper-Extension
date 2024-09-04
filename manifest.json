@@ -8,7 +8,8 @@
       "alarms",
       "notifications",
       "contextMenus",
-      "tabs"
+      "tabs",
+      "activeTab"
     ],
     "background": {
       "service_worker": "scripts/background.js"
@@ -32,9 +33,6 @@
       "16": "icons/icon.png",
       "48": "icons/icon.png",
       "128": "icons/icon.png"
-    },
-    "host_permissions": [
-      "*://www.google.com/*"
-    ]
+    }
   }
   
