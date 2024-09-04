@@ -4,34 +4,37 @@
     "version": "1.0",
     "description": "A study helper project",
     "permissions": [
-        "storage",
-        "activeTab",
-        "notifications", 
-        "background",
-        "alarms",
-        "contextMenus",
-        "scripting"
+      "storage",
+      "alarms",
+      "notifications",
+      "contextMenus",
+      "tabs"
     ],
     "background": {
-        "service_worker": "scripts/background.js"
+      "service_worker": "scripts/background.js"
     },
     "content_scripts": [
-        {
-            "matches": ["<all_urls>"],
-            "js": ["scripts/content.js"]
-        }
+      {
+        "matches": ["<all_urls>"],
+        "js": ["scripts/content.js"]
+      }
     ],
     "action": {
-        "default_popup": "popup.html",
-        "default_icon": {
-            "16": "icons/icon.png",
-            "48": "icons/icon.png",
-            "128": "icons/icon.png"
-        }
-    },
-    "icons": {
+      "default_popup": "popup.html",
+      "default_title": "Study Buddy",
+      "default_icon": {
         "16": "icons/icon.png",
         "48": "icons/icon.png",
         "128": "icons/icon.png"
-    }
-}
+      }
+    },
+    "icons": {
+      "16": "icons/icon.png",
+      "48": "icons/icon.png",
+      "128": "icons/icon.png"
+    },
+    "host_permissions": [
+      "*://www.google.com/*"
+    ]
+  }
+  
