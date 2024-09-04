@@ -21,6 +21,7 @@ resetTimerBtn.addEventListener("click", () => {
         isBreakRunning: false
     }, () => {
         startTimerBtn.textContent = "Start Timer"
+        updateTime();
     })
 })
 
@@ -39,24 +40,33 @@ startTimerBtn.addEventListener("click", () => {
 const time = document.getElementById("time")
 const whichPhase = document.getElementById("phase")
 function updateTime() {
-    chrome.storage.local.get(["timer", "timeOption", "breakTimeOption", "isBreakRunning", "isRunning"], (res) => {
-        const time = document.getElementById("time")
-        const minutes = res.isRunning ? `${res.timeOption - Math.ceil(res.timer / 60)}`.padStart(2, "0") : `${res.breakTimeOption - Math.ceil(res.timer / 60)}`.padStart(2, "0")
-        let seconds = "00"
-        if (res.timer % 60 != 0) {
-            seconds = `${60 - res.timer % 60}`.padStart(2, "0")
-        }
-        time.textContent = `${minutes}:${seconds}`
-        
-        if (res.isBreakRunning) {
-            whichPhase.textContent = "Break";
-        } else if (res.isRunning) {
-            whichPhase.textContent = "Work";
-        } else {
-            whichPhase.textContent = "Paused";  // Optional: handle a paused state if needed
-        }
-    })
+  chrome.storage.local.get(["timer", "breakTimer", "timeOption", "breakTimeOption", "isBreakRunning", "isRunning"], (res) => {
+      const time = document.getElementById("time");
+
+      let minutes;
+      let seconds = "00";
+
+      // Work timer running or paused, default to work time if both are false
+      if (res.isRunning || (!res.isRunning && !res.isBreakRunning)) {
+          minutes = `${res.timeOption - Math.ceil(res.timer / 60)}`.padStart(2, "0");
+          if (res.timer % 60 !== 0) {
+              seconds = `${60 - res.timer % 60}`.padStart(2, "0");
+          }
+          whichPhase.textContent = res.isRunning ? "Work" : "Paused";  // Show "Work" or "Paused"
+      }
+      // Break timer running
+      else if (res.isBreakRunning) {
+          minutes = `${res.breakTimeOption - Math.ceil(res.breakTimer / 60)}`.padStart(2, "0");
+          if (res.breakTimer % 60 !== 0) {
+              seconds = `${60 - res.breakTimer % 60}`.padStart(2, "0");
+          }
+          whichPhase.textContent = "Break";
+      }
+
+      time.textContent = `${minutes}:${seconds}`;
+  });
 }
+
 
 updateTime()
 setInterval(updateTime, 1000)
