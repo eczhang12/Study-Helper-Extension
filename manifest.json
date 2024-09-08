@@ -8,7 +8,6 @@
       "alarms",
       "notifications",
       "contextMenus",
-      "tabs",
       "activeTab"
     ],
     "background": {

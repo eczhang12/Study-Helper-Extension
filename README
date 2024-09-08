@@ -1,0 +1,18 @@
+****STILL IN DEVELOPMENT (Accepting feedback tho!)
+
+Description: A chrome extension aimed towards college students who want to utilize their time
+             more efficiently when studying and have integrated functionality that makes it
+             a little easier to learn.
+
+Reason:
+This is a Study Helper Chrome Extension created by Evan Zhang as a project
+to help improve web design skills and also create a tool that benefits my daily life
+
+Functionality
+Pomodoro Timer - can be adjusted for whatever work/break cycle the user wants
+Todo List - A list where the user can create a checklist of what they want to accomplish
+            in their study time
+Definition Lookup - a function where highlighting text, right-clicking, and clicking the find definition
+                    button opens up a new tab with the prompt "define <blank>"
+Automatic Anki Deck - Whatever definitions the user decides to search up are stored in a list where a button click
+                      will generate an Anki List
