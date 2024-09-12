@@ -99,7 +99,7 @@ saveBtn.addEventListener("click", () => {
     })
 })
 
-chrome.storage.local.get(["timeOption"], (res) => {
+chrome.storage.local.get(["timeOption", "breakTimeOption"], (res) => {
     timeOption.value = res.timeOption
     breakTimeOption.value = res.breakTimeOption
 })
